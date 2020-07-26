@@ -12,16 +12,11 @@ import h5py
 import glob
 from sklearn.metrics import average_precision_score
 import sys
-sys.path.insert(0,'./animation')
+sys.path.insert(0,'./Animation')
 #from plot_video_animation_3D import * 
 import pandas as pd
 import matplotlib.pyplot as plt
 from img_exp import ImgExp
-root_drive = 'N:/FallDetection/Fall-Data/' 
-
-if not os.path.isdir(root_drive):
-    print('Using Sharcnet equivalent of root_drive')
-    root_drive = '/home/jjniatsl/project/jjniatsl/Fall-Data/'
 
 root_drive = './'
 class SeqExp(ImgExp):
@@ -222,7 +217,8 @@ class SeqExp(ImgExp):
             ROC_mat = np.ones((num_vids, 2*win_len + 2)) # 20 scores-Xstd,Xmean,tols std..,tols mean..
             PR_mat = np.ones((num_vids, 2*win_len + 2))
 
-            path = root_drive + 'H5Data/{}/Data_set-{}-imgdim{}x{}.h5'.format(dset, dset, img_width, img_height)
+            # ==================== edited this line ====================
+            path = root_drive + 'H5Data/Data_set-{}-imgdim{}x{}.h5'.format(dset, img_width, img_height)
 
             if not os.path.isfile(path):
                 print('initializing h5py..')
@@ -253,7 +249,6 @@ class SeqExp(ImgExp):
                     x_std = RE_dict['x_std']
                     x_mean = RE_dict['x_mean']
                     
-                    
                     std_total.append(x_std)
                     mean_total.append(x_mean)
                     labels_total_l.append(labels_total)
@@ -264,7 +259,9 @@ class SeqExp(ImgExp):
                     auc_x_mean, conf_mat, g_mean, ap_x_mean = get_output(labels = test_labels,\
                             predictions = x_mean, data_option = 'NA', to_plot = False)
 
-                    ROC_mat[vid_index,0] = auc_x_std
+                    print('ROC: ', auc_x_mean)
+
+                    #ROC_mat[vid_index,0] = auc_x_std
                     ROC_mat[vid_index,1] = auc_x_mean
 
                     tol_mat, tol_keys = gather_auc_avg_per_tol(in_mean, in_std, labels = test_labels, win_len = win_len)
@@ -285,7 +282,7 @@ class SeqExp(ImgExp):
                     
                     if animate == True:
                         ani_dir = './Animation/{}/'.format(dset)
-                        ani_dir = ani_dir + '/{}'.format(model_name)
+                        ani_dir = ani_dir + '{}'.format(model_name)
                         if not os.path.isdir(ani_dir):
                             os.makedirs(ani_dir)
                         print('saving animation to {}'.format(ani_dir))
@@ -296,6 +293,7 @@ class SeqExp(ImgExp):
                 #    break
                 print('ROC_mat.shape', ROC_mat.shape)
                 AUROC_avg = np.mean(ROC_mat, axis = 0)
+
                 AUROC_std = np.std(ROC_mat, axis = 0)
                 AUROC_avg_std = join_mean_std(AUROC_avg, AUROC_std)
                 # print(AUROC_std)
@@ -304,11 +302,14 @@ class SeqExp(ImgExp):
 
                 AUPR_avg_std = join_mean_std(AUPR_avg, AUPR_std)
                 total = np.vstack((AUROC_avg_std, AUPR_avg_std))
-                print(tol_keys)
+               
+                
+                #print(tol_keys)
                 df = pd.DataFrame(data = total, index = ['AUROC','AUPR'], columns = ['X-STD','X-Mean'] + tol_keys)
                 
                 print(df)
-                base = './AEComparisons/all_scores/{}/'.format(self.dset)
+
+                '''base = './AEComparisons/all_scores/{}/'.format(self.dset)
 
                 if not os.path.isdir(base):
                     os.makedirs(base)
@@ -316,7 +317,7 @@ class SeqExp(ImgExp):
                 save_path = './AEComparisons/all_scores/{}/{}.csv'.format(dset, model_name)
                 
                 print(save_path)
-                df.to_csv(save_path)
+                df.to_csv(save_path)'''
                 
 
 

@@ -4,8 +4,8 @@ from ae_exp import AEExp
 
 if __name__ == "__main__":
 
-	dset = 'UR-Filled'
-	pre_load = None #Put path to your saved model here!! It will be in Models/{dset}/model_name.h5
+	dset = 'custom'
+	pre_load = 'Models/UR-Filled/DAE-relu_tanh-Dropout-500-hor_flip.hdf5' #Put path to your saved model here!! It will be in Models/{dset}/model_name.h5
 	
 
 	if pre_load == None:

@@ -6,8 +6,8 @@ if __name__ == "__main__":
         '''
         These are the training setting. 
         '''
-        dset = 'Thermal-Dummy'
-        img_width, img_height, win_len, epochs = 64,64, 2,50 #win len is set to 8 for paper
+        dset = 'custom'
+        img_width, img_height, win_len, epochs = 64,64, 8,50 #win len is set to 8 for paper
         stride = 1
        
         model, model_name, model_type = DSTCAE_C3D(img_width, img_height, win_len)

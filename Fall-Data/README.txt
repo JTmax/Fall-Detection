@@ -20,3 +20,7 @@ elif dset == 'SDU':
 elif dset == 'SDU-Filled':
     path_Fall =  '/SDUFall/Fall/Fall*/Filled'
     path_ADL =  '/SDUFall/NonFall/ADL*/Filled'
+
+elif dset == 'custom':
+    path_Fall = '/custom/Fall/Fall*'
+    path_ADL = '/custom/NonFall/adl*'

@@ -39,67 +39,26 @@ def fill_depth_im(img_path, plot = False):
 	return dst
 
 
-
-'N:/FallDetection/Fall-Data/SDUFall/train/NonFall/ADL1/Depth'
-def fill_SDU_NonFall():
-	root = './Fall-Data/SDUFall'
-
-	train_path = root + '/train/NonFall/ADL*/'
-	#train_path_depth = train_path + 'Depth'
-	print(train_path)
-	ADL_dir_list = glob.glob(train_path)
-	print(len(ADL_dir_list))
-
-	for ADL_dir in ADL_dir_list:
-		frames = glob.glob(ADL_dir + '/Depth/*.png')
-		print(len(frames))
-		#print("\n".join(frames)) #Use this to check if sorted
-		frames = sort_frames(frames, 'SDU')
-		#print("\n".join(frames)) #Use this to check if sorted
-
-		save_path = ADL_dir + '/Filled'
-		if os.path.isdir(save_path):
-			assert 'Filled' in save_path
-			if not 'Filled' in save_path:
-				print('trying to remove dir which is not Filled')
-			shutil.rmtree(save_path)
-
-		os.mkdir(save_path)
-		print(save_path)
-		for frame in frames:
-			frame_filled = fill_depth_im(frame)
-
-			#print(frame)
-			frame_base = os.path.basename(frame)
-			#print(frame_base)
-
-			save_path_fr = save_path + '/' + frame_base
-			print(save_path_fr)
-			save_path_fr.replace('\\','/')
-
-			cv2.imwrite(save_path_fr, frame_filled)
-			#break
-		break
-
-
 def fill_SDU_Fall():
-	root = 'N:/FallDetection/Fall-Data/SDUFall/sorted_by_person/Fall'
+	root = '/home/taryar/deepLearning/research/victor/data/real'
 
-	test_path_F = root + '/Fall*/'
+	test_path_F = root + '/subtracted/Fall*'
 
 	#train_path_depth = train_path + 'Depth'
 	print(test_path_F)
 	Fall_dir_list = glob.glob(test_path_F)
 	print(len(Fall_dir_list))
 
+	i = 1
 	for Fall_dir in Fall_dir_list:
-		frames = glob.glob(Fall_dir + '/Depth/*.png')
+		frames = glob.glob(Fall_dir + '/file_*.png')
 		print(len(frames))
 		#print("\n".join(frames)) #Use this to check if sorted
 		#frames = sort_frames(frames, 'SDU')
 		#print("\n".join(frames)) #Use this to check if sorted
+		
 
-		save_path = Fall_dir + '/Filled'
+		save_path = root + '/filled/Fall{}'.format(i)
 		if os.path.isdir(save_path):
 			assert 'Filled' in save_path
 			if not 'Filled' in save_path:
@@ -108,6 +67,7 @@ def fill_SDU_Fall():
 
 		os.mkdir(save_path)
 		print(save_path)
+		
 		for frame in frames:
 			frame_filled = fill_depth_im(frame)
 
@@ -117,23 +77,13 @@ def fill_SDU_Fall():
 
 			save_path_fr = save_path + '/' + frame_base
 			print(save_path_fr)
-			save_path_fr.replace('\\','/')
+			#save_path_fr.replace('\\','/')
 
 			cv2.imwrite(save_path_fr, frame_filled)
 		#break
 
-
-
+		i += 1
 
 
 if __name__ == "__main__":
 	fill_SDU_Fall()
-	sdu = 'N:/FallDetection/Fall-Data/SDUFall/test/Fall/Fall18/Depth/0080.png'
-	# sdu = 'N:/FallDetection/Fall-Data/SDUFall/train/NonFall/ADL1/Depth/0020.png'.format(i)
-	# TST = 'N:/FallDetection/Fall-Data/TST_Kinect_V2/Reorganized/train/NonFall/ADL1/Filedepth_{}.png'.format(i)
-
-
-
-
-
-	#dst = fill_depth_im(sdu, True)

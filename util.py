@@ -157,7 +157,16 @@ def generate_vid_keys(vid_base_name, dset):
             num_vids = 40
 
         else:
-            print('invalid basename')        
+            print('invalid basename')
+
+    elif dset == 'custom':
+        if vid_base_name == 'Fall':
+            num_vids = 30
+        elif vid_base_name == 'adl':
+            num_vids = 40
+
+        else:
+            print('invalid basename')
 
     elif dset == 'TST':
         if vid_base_name == 'Fall' or vid_base_name =='NFFall':
@@ -235,7 +244,6 @@ def get_cross_window_stats(scores_mat):
         mean = np.nanmean(row, axis= 0)
         std = np.nanstd(row, axis= 0)
         scores_final.append((mean,std, mean+std*10**3))
-    print(len(scores_final))
     
     scores_final = np.array(scores_final)
     return scores_final
@@ -303,17 +311,18 @@ def get_thresholds_helper(RE, omega = 1.5):
         return thresholds
 
 
-def animate_fall_detect_Spresent(testfall, recons, scores, win_len = 1, threshold = 0, to_save = './test.mp4'):
+def animate_fall_detect_Spresent(testfall, recons, scores, win_len = 8, threshold = 0, to_save = './test.mp4'):
     '''
     Pass in data for single video, recons is recons frames, scores is x_std or x_mean etc.
     Threshold is RRE, mean, etc..
     '''
     import matplotlib.gridspec as gridspec
-    gs = gridspec.GridSpec(2,2,height_ratios = [2,1])
+    gs = gridspec.GridSpec(nrows=2,ncols=2,height_ratios = [2,1])
     
     ht, wd = 64,64
 
     eps = .0001
+
     #setup figure
     #fig = plt.figure()
     fig, ((ax1,ax3)) = plt.subplots(1,2,figsize = (6,6))
@@ -336,6 +345,8 @@ def animate_fall_detect_Spresent(testfall, recons, scores, win_len = 1, threshol
     ax2.set_ylabel('Score')
     ax2.set_xlabel('Frame')
 
+    #add another plot for ROC
+
     if threshold != 0:
         ax2.axhline(y= threshold, color='r', linestyle='dashed', label = 'RRE')
         ax2.legend()
@@ -349,7 +360,7 @@ def animate_fall_detect_Spresent(testfall, recons, scores, win_len = 1, threshol
 
     #set up list of images for animation
     ims=[]
-   
+
     for time in range(len(testfall)-(win_len-1)-1):
         
         im1 = ax1.imshow(testfall[time].reshape(ht,wd), cmap = 'gray', aspect = 'equal')

@@ -112,7 +112,7 @@ class AEExp(ImgExp):
 		self.save_exp()
 
 	def test(self, raw = False, animate = False):
-
+    		
 		get_stats_for_all_vids(experiment = self,\
 					metric = 'AUC', dset = self.dset, raw = raw, animate = animate)
 

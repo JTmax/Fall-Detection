@@ -57,6 +57,10 @@ def get_dir_lists(dset):
     elif dset == 'SDU-Filled':
         path_Fall = root_drive + '/Fall-Data/SDUFall/Fall/Fall*/Filled'
         path_ADL = root_drive + '/Fall-Data/SDUFall/NonFall/ADL*/Filled'
+
+    elif dset == 'custom':
+        path_Fall = root_drive + '/Fall-Data/Custom/Fall/original/Fall*'
+        path_ADL = root_drive + '/Fall-Data/Custom/NonFall/original/adl*'
         
     print(path_Fall, path_ADL)
     vid_dir_list_Fall = glob.glob(path_Fall)
@@ -133,7 +137,7 @@ def init_videos(img_width = 64, img_height = 64, \
 
 
     if len(vid_dir_list_0) == 0 and len(vid_dir_list_1) == 0:
-        print('no videos found, make sure video files are placed in Fall-Data folde, terminating...')
+        print('no videos found, make sure video files are placed in Fall-Data folder, terminating...')
         sys.exit()
 
     if raw == False: 
@@ -210,8 +214,9 @@ def init_vid(vid_dir = None, vid_class = None, img_width = 32, img_height = 32,\
 
 def get_fall_indeces(Fall_name, dset):
     root_dir = './Fall-Data/'
-            
-    labels_dir = root_dir + '/{}/Labels.csv'.format(dset)
+
+    # ==================== edit this line ============================        
+    labels_dir = root_dir + 'UR_Kinect/Labels.csv'
     #print(labels_dir)
     import pandas as pd
     my_data = pd.read_csv(labels_dir, sep=',', header = 0, index_col = 0)
@@ -241,19 +246,13 @@ def sort_frames(frames, dset):
                 print('failed to sort UR vid frames')
                 return
             
-        elif dset == 'TST': 
+        elif dset == 'custom':
+            print('sorting custom frames')
             try:
-                frames = sorted(frames, key = lambda x: int(x.split('_')[-1].split('.')[0]))
+                frames = sorted(frames, key=lambda f: int(re.sub('\D', '', f)))
             except ValueError:
-                print('failed to sort vid frames, trying again....')
-                pass
-
-        elif dset == 'FallFree' or dset == 'FallFree-Filled':
-            try:
-                frames = sorted(frames, key = lambda x: int(x.split('_')[2]))
-            except ValueError:
-                print('failed to sort vid frames, trying again....')
-                pass
+                print('failed to sort custom vid frames')
+                return
 
         return frames
 
@@ -363,6 +362,13 @@ def init_data_by_class(vid_class = 'NonFall', dset = 'Thermal',\
 
     elif dset == 'SDU-Filled':
         fpath = root_drive + '/SDUFall/{}/ADL*/Filled'.format(vid_class)
+
+
+    elif dset == 'custom':
+        if vid_class == 'NonFall':
+            fpath = root_drive + '/Fall-Data/Custom/{}/original/adl*'.format(vid_class)
+        else:
+            fpath = root_drive + '/Fall-Data/Custom/{}/original/Fall*'.format(vid_class)
         
 
     data = create_img_data_set(fpath, ht, wd, raw, False) #Don't need to sort

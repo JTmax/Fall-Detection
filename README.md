@@ -2,82 +2,45 @@
 
 This code is developed by Jacob Nogas while working at IATSL (http://iatsl.org/) as a UofT PEY intern under the supervision of Dr. Shehroz Khan, Scientist, KITE-Toronto Rehab, University Health Network, Canada. 
 
-We formulated the fall detection problem as an anomaly detection problem because falls occur rarely and there may be insufficient data to train supervised classifiers. To handle privacy concerns, this work focus on detecting falls from thermal and depth cameras.
-Falls are detected by training a deep spatio-temporal autoencoder to minimize the recontruction error of activities of daily living video frames. It was hypothesizes that the reconstruction error for unseen falls should be higher, as shown in example GIFs below:
+Under the supervision of Dr. Jaime Valls Miro, the code is modified and tested for validation by Taryar Myint Mo, University of Technology, Sydney, as final year capstone project.
 
-<a href="https://imgflip.com/gif/2gb012"><img src="https://i.imgflip.com/2gb012.gif" title="made at imgflip.com"/></a> <a href="https://imgflip.com/gif/2fxxpd"><img src="https://i.imgflip.com/2fxxpd.gif" title="made at imgflip.com"/></a> <a href="https://imgflip.com/gif/2fxzt3"><img src="https://i.imgflip.com/2fxzt3.gif" title="made at imgflip.com"/></a>
+Please refer to the original code from the repository: https://github.com/JJN123/Fall-Detection for more details.
 
-**Code Usage:**
+## Code Usage & Modifications
 
-The code base is split into two main subsets
+The original code is structured in such a way that different neural networks and different datasets can be tested rapidly. The two major datasets of interest are UR_Kinect dataset and SDU dataset.
 
-{model}\_main\_{train}  
-{model}\_main\_{test}
+UR_Kinect dataset that is used in the orignal research, as well as custom dataset made for validation is available in the following link. UTS account is needed to get access to the link.
 
-which will execute training, or testing, respectively, with model {model}. 
+onedrive link: https://studentutsedu-my.sharepoint.com/:f:/g/personal/12675005_student_uts_edu_au/EqVNte_6AYtAnc9H-mZZXqkBJ7Wk6P_EC8PtYh2wkyaxug?e=7fHK4Z
 
-**Training:**
+The files of interest in my research are as follows.
 
-To use this code, first run one of the training modules. A model is then saved to Models/Dataset/....
-For example, we can train a deep fully conntected autoendoer (dae) on Thermal data as follows. First, run dae_main_train.py with a choice of dataset. For instance to train on Thermal data, set dset = 'Thermal' in dae_main_train.py.
+1. dstcae_c3d_main_test.py
+2. dstcae_c3d_main_train.py
+3. seq_exp.py
+4. util.py
+5. h5py_init.py
+6. opencvinpaint.py
+7. camera.py
 
-**Testing:**
+**1. ---**
+dstcae_c3d_main_test.py file is the main script that runs the test, and output animation videos. The model to use, dataset to use as well as input shapes of the tensors can be modified in this script.
 
-To evaluate the model, run the correpsonding test module. The results of testing will be saved to AEComparisons. Once training has completed, find the saved model under Models/Thermal/{model_name}. To evaluate the model, set the variable pre_load in dae_main_test.py to the path to this model. Run dae_main_test.py and find the results in AEComparisons/AUC/Thermal/{model_name}. The Labels.csv file under each dataset provides the ground truth labels for start and end of fall frames.
+**2. ---**
+dstcae_c3d_main_train.py file requires a dataset, trains and outputs a model.
 
-**Generating Animation:**
+**3. ---**
+seq_exp.py consists of train and test functions that are called in the above two scripts. "test" function is the main function of interset and it includes code for animation and manipulation of results.
 
-To generate an animation, such as shown in the above GIF, run dae_main_test.py, with animate option set to True. An animation (mp4 file) for each testing video will be saved to animation/Thermal/{model_name}.
+**4. ---**
+util.py includes functions on how the results are manipulated for calculation of ROC scores. It also includes code that limits the number of videos that will be tested at one time. At line 162, custom folder is added to the code. Video numbers has to be edited to match the number of videos that are required to be tested.
 
+**5. ---**
+h5py_init.py includes preprocessing code for the images (videos). Custom folder is added to the list of datasets. New videos taken manually can be placed in the custom dataset or new dataset name can be added to the list.
 
-**Requirements:**
+**6. ---**
+opencvinpaint.py is the script used to modify depth images that has black spots (holes) and fill them for better consistency.
 
-Keras - 2.2.2  
-Tensorflow - 1.10.0  
-Python - 3.6.4
-
-**Dataset Sharing:**  
-
-Please contact Dr. Shehroz Khan at shehroz.khan@uhn.ca for access to preprocessed data. Please specify your affiliation and why you need this data in your email.
-
-Place the data in folder Fall-Data. See README.txt in Fall-Data for information on using the shared data.
-
-Please use your institutional or university or commonly used email id (e.g. gmail) to request data. Otherwise, your email may go to the Spam folder and you may not get any response.
-
-**Citation Policy:**
-
-If you use or compare the results from the pre-processed data, then you should cite our papers:
-
-1. For comparison with Convolutional-LSTM: 
-
-@inproceedings{nogasfall2018,
-  title={Fall Detection from Thermal Camera Using Convolutional LSTM Autoencoder},
-  author={Nogas, Jacob and Khan, Shehroz S and Mihailidis, Alex},
-  year={2018},
-  booktitle={Proceedings of the $2^{nd}$ workshop on Aging, Rehabilitation and Independent Assisted Living, IJCAI Workshop}
-}
-
-2. For comparison with Deep Spatio-temporal (3D) Autoencoders, Convolutional-LSTM: 
-
-@article{nogas2018deepfall,
-  title={DeepFall--Non-invasive Fall Detection with Deep Spatio-Temporal Convolutional Autoencoders},
-  author={Nogas, Jacob and Khan, Shehroz S and Mihailidis, Alex},
-  journal={Journal of Health Informatics Research},
-  year={2019}
-}
-
-**Code Legend for Training and Testing**
-
-1. dae_main_train.py - Train a fully connected autoencoder model
-2. dae_main_test.py - Test a fully connected autoencoder model
-
-3. cae_main_train.py - Train a 2D convolutional autoencoder model
-4. cae_main_test.py - Test a 2D convolutional autoencoder model
-
-
-5. clstm_ae_main_train.py - Train a convolutional LSTM autoencoder model
-6. clstm_ae_main_test.py - Test a convolutional LSTM autoencoder model
-
-7. dstcae_c3d_main_train.py - Train a 3D convolutional autoencoder model
-8. dstcae_c3d_main_test.py - Test a 3D convolutional autoencoder model
-
+**7. ---**
+camera.py is the script used to take depth images using the depth camera Intel Realsense D435.
